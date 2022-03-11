@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/system/admin_camaras/admin_camaras.iml" filepath="$PROJECT_DIR$/system/admin_camaras/admin_camaras.iml" />
+      <module fileurl="file://$PROJECT_DIR$/system/admin_gestores/admin_gestores.iml" filepath="$PROJECT_DIR$/system/admin_gestores/admin_gestores.iml" />
+      <module fileurl="file://$PROJECT_DIR$/system/admin_notificacoes/admin_notificacoes.iml" filepath="$PROJECT_DIR$/system/admin_notificacoes/admin_notificacoes.iml" />
+      <module fileurl="file://$PROJECT_DIR$/system/data/data.iml" filepath="$PROJECT_DIR$/system/data/data.iml" />
+      <module fileurl="file://$PROJECT_DIR$/system/kafka_topic_data/kafka_topic_data.iml" filepath="$PROJECT_DIR$/system/kafka_topic_data/kafka_topic_data.iml" />
+      <module fileurl="file://$PROJECT_DIR$/simulador/simulador.iml" filepath="$PROJECT_DIR$/simulador/simulador.iml" />
+      <module fileurl="file://$PROJECT_DIR$/system/system.iml" filepath="$PROJECT_DIR$/system/system.iml" />
+      <module fileurl="file://$PROJECT_DIR$/system/web_service/web_service.iml" filepath="$PROJECT_DIR$/system/web_service/web_service.iml" />
+    </modules>
+  </component>
+</project>
