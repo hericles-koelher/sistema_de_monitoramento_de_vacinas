@@ -52,6 +52,22 @@ public class CamaraController {
         );
     }
 
+    @GetMapping("gestor/{id}")
+    public @ResponseBody List<CamaraOutputModel> getCamarasWithGestor(
+            @PathVariable(value = "id") Long idGestor
+    ){
+        log.info("Buscando câmaras cujo gestor possui ID: " + idGestor);
+
+        var gestor = gestorRepository.findById(idGestor)
+                .orElseThrow(
+                        () -> new ResponseStatusException(HttpStatus.NOT_FOUND)
+                );
+
+        return camaraOutputModels(
+                camaraRepository.findAllCamarasWithGestor(gestor)
+        );
+    }
+
     @GetMapping("/{id}")
     public @ResponseBody CamaraOutputModel getCamaraById(
             @PathVariable(value = "id") Long id) {
