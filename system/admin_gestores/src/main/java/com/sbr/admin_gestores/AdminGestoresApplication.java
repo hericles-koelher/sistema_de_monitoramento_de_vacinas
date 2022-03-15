@@ -41,7 +41,7 @@ public class AdminGestoresApplication {
         LocalizacaoGestor novaLocalizacaoGestor = record.value();
 
         Optional<Gestor> optionalGestor = gestorRepository
-                .findById(record.value().getIdGestor());
+                .findById(record.key());
 
         optionalGestor.ifPresentOrElse((Gestor g) -> {
           g.setLatitude(novaLocalizacaoGestor.getLatitude());
@@ -50,11 +50,11 @@ public class AdminGestoresApplication {
           gestorRepository.save(g);
 
           log.info(
-                  "A localização do Gestor de ID " + novaLocalizacaoGestor.getIdGestor() + " foi atualizada!"
+                  "A localização do Gestor de ID " + record.key() + " foi atualizada!"
           );
 
         }, () -> log.error(
-                "O Gestor de ID " + novaLocalizacaoGestor.getIdGestor() + " não existe!"
+                "O Gestor de ID " + record.key() + " não existe!"
                 )
         );
     }

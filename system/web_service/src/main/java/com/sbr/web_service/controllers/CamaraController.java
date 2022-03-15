@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -58,13 +59,13 @@ public class CamaraController {
     ){
         log.info("Buscando câmaras cujo gestor possui ID: " + idGestor);
 
-        var gestor = gestorRepository.findById(idGestor)
+        var gestor = gestorRepository.findByIdWithCamarasLoaded(idGestor)
                 .orElseThrow(
                         () -> new ResponseStatusException(HttpStatus.NOT_FOUND)
                 );
 
         return camaraOutputModels(
-                camaraRepository.findAllCamarasWithGestor(gestor)
+                new ArrayList<>(gestor.getCamaras())
         );
     }
 
