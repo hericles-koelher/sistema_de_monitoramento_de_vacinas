@@ -5,20 +5,26 @@ import com.admin_notificacoes.admin_notificacoes.services.MessageSender;
 import com.sbr.data.entities.Camara;
 import com.sbr.data.entities.Gestor;
 import com.sbr.data.repositories.CamaraRepository;
+import com.sbr.data.repositories.NotificacaoRepository;
 import com.sbr.kafka_topic_data.entities.Notificacao;
+import com.sbr.kafka_topic_data.enums.TipoNotificacao;
 import com.sbr.kafka_topic_data.utils.KafkaEntityDeserializer;
 import com.sbr.kafka_topic_data.utils.KafkaEntitySerializer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
+import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.kstream.Consumed;
+import org.apache.kafka.streams.kstream.Produced;
+import org.apache.kafka.streams.kstream.TimeWindows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -32,6 +38,7 @@ public class NotificacoesProcessor {
     private String notificacoesTopicName;
 
     private final CamaraRepository camaraRepository;
+    private final NotificacaoRepository notificacaoRepository;
     private final MessageSender messageSender;
     private final DistanceCalculator distanceCalculator;
 
@@ -42,6 +49,10 @@ public class NotificacoesProcessor {
             new KafkaEntityDeserializer<>()
     );
 
+    private static final int MINIMUM_NUMBER_OF_INCIDENTS = 7;
+    
+    private static final int NUMBER_OF_DAYS_TO_ANALYSE = 7;
+
     @Autowired
     void processor(StreamsBuilder streamsBuilder){
         streamsBuilder
@@ -49,7 +60,7 @@ public class NotificacoesProcessor {
                         notificacoesTopicName,
                         Consumed.with(DEFAULT_KEY_SERDE, NOTIFICACAO_VALUE_SERDE)
                 )
-                .foreach((idCamara, notificacao) -> camaraRepository
+                .peek((idCamara, notificacao) -> camaraRepository
                         .findByIdWithGestoresLoaded(idCamara).ifPresent(
                                 camara -> {
                                     switch (notificacao.getTipoNotificacao()){
@@ -57,14 +68,48 @@ public class NotificacoesProcessor {
                                             handleNotificacaoAtencao(notificacao, camara);
                                             break;
                                         case Alerta:
+                                            updateDB(com.sbr.data.enums.TipoNotificacao.Alerta, camara);
                                             handleNotificacaoAlerta(notificacao, camara);
                                             break;
                                         case Descarte:
+                                            updateDB(com.sbr.data.enums.TipoNotificacao.Descarte, camara);
                                             handleNotificacaoDescarte(notificacao, camara);
                                             break;
+                                        case  ProblemasFrequentes:
+                                            updateDB(com.sbr.data.enums.TipoNotificacao.ProblemasFrequentes, camara);
+                                            handleNotificacaoProblemasFrequentes(camara);
                                     }
                                 })
+                ).filter(
+                        (idCamara, notificacao) ->
+                                notificacao.getTipoNotificacao() == TipoNotificacao.Atencao ||
+                                        notificacao.getTipoNotificacao() == TipoNotificacao.Descarte
+                ).groupByKey().windowedBy(
+                        TimeWindows.ofSizeWithNoGrace(
+                                Duration.ofDays(NUMBER_OF_DAYS_TO_ANALYSE)
+                        )
+                ).count().filter(
+                        (windowedIdCamara, countResult) -> countResult > MINIMUM_NUMBER_OF_INCIDENTS
+                ).toStream()
+                .map((windowedKey, countResult) ->
+                        KeyValue.pair(
+                                windowedKey.key(), 
+                                new Notificacao(TipoNotificacao.ProblemasFrequentes)
+                        )
+                )
+                .to(
+                        notificacoesTopicName,
+                        Produced.with(DEFAULT_KEY_SERDE, NOTIFICACAO_VALUE_SERDE)
                 );
+    }
+
+    private void updateDB(com.sbr.data.enums.TipoNotificacao tipoNotificacao, Camara camara){
+        notificacaoRepository.save(
+                new com.sbr.data.entities.Notificacao(
+                        camara,
+                        tipoNotificacao
+                )
+        );
     }
 
     private void handleNotificacaoAtencao(Notificacao notificacao, Camara camara){
@@ -105,8 +150,8 @@ public class NotificacoesProcessor {
                 + "\n\tLongitude = " + notificacao.getLongitude();
 
         try {
-            // O gestor nunca será null, mas o lint do intellij estava reclamando,
-            // então resolvi com isso XD.
+            // O gestor nunca será null, mas o lint do intellij reclamava,
+            // então resolvi com isso.
             assert nearestGestor != null;
 
             messageSender.sendMessage(message, List.of(nearestGestor));
@@ -132,6 +177,24 @@ public class NotificacoesProcessor {
             messageSender.sendMessage(message, new ArrayList<>(camara.getGestores()));
 
             log.info("Um e-mail de descarte foi enviado a todos os gestores.");
+        } catch (IOException e) {
+            log.error("Encontramos um problema ao enviar as mensagens...");
+        }
+    }
+
+    private void handleNotificacaoProblemasFrequentes(Camara camara){
+        log.info("Notificação de alta prioridade detectada. Enviando email...");
+
+        String message;
+
+        message = "Atenção gestor, a câmara " + camara.getId()
+                + " tem apresentando uma série de "
+                + "problemas na ultima semana. Favor solucionar este problema.";
+
+        try {
+            messageSender.sendMessage(message, new ArrayList<>(camara.getGestores()));
+
+            log.info("Um e-mail de problemas frequentes foi enviado a todos os gestores.");
         } catch (IOException e) {
             log.error("Encontramos um problema ao enviar as mensagens...");
         }

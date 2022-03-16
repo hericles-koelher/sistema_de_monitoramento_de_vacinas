@@ -13,4 +13,8 @@ public class Notificacao {
     private double temperatura;
     private double latitude;
     private double longitude;
+
+    public Notificacao(TipoNotificacao tipoNotificacao) {
+        this.tipoNotificacao = tipoNotificacao;
+    }
 }
