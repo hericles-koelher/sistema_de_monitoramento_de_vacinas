@@ -5,6 +5,7 @@
       <list>
         <option value="$PROJECT_DIR$/system/pom.xml" />
         <option value="$PROJECT_DIR$/system/leituras_camaras_stream_app/pom.xml" />
+        <option value="$PROJECT_DIR$/simulador/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">
