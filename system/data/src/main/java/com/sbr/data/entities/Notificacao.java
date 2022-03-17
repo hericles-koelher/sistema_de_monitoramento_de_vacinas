@@ -23,11 +23,11 @@ public class Notificacao {
 
     private TipoNotificacao tipoNotificacao;
 
-    private boolean resolvido;
+    private boolean atendida;
 
     public Notificacao(@NonNull Camara camara, TipoNotificacao tipoNotificacao) {
         this.camara = camara;
         this.tipoNotificacao = tipoNotificacao;
-        this.resolvido = false;
+        this.atendida = false;
     }
 }
