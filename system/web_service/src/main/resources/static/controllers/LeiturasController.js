@@ -1,26 +1,40 @@
+async function getLeituras(){
+    $('#main').load('leituras.html', () => {
+        console.log('teste');
+        $.get('http://localhost:8080/api/v1/leituras')
+        .done(data => {
+            console.log(data);
+            preencheLeituras(data);
+        });
+    });
+}
+
+function getLeituraById(id){
+    $('#main').load('leituras.html', () => {
+        $.get(`http://localhost:8080/api/v1/leituras/${id}`)
+        .done(data => {
+            console.log(data);
+            preencheLeituras(data);
+        });
+    });
+}
+
+function getLeiturasByCamara(id){
+    $('#main').load('leituras.html', () => {
+        $.get(`http://localhost:8080/api/v1/leituras/camara/${id}`)
+        .done(data => {
+            console.log(data);
+            preencheLeituras(data);
+        });
+    });
+}
+
 function preencheLeituras(dados = ''){
-    resultados = [
-        {
-            "id": 544,
-            "data": "2022-03-15T13:15:13",
-            "temperatura": 16.9,
-            "coordenadaX": 16.9,
-            "coordenadaY": 45.7,
-            "idCamara": 1
-        },
-        {
-            "id": 545,
-            "data": "2022-03-15T13:32:18",
-            "temperatura": 21.9,
-            "coordenadaX": 23.5,
-            "coordenadaY": 66.7,
-            "idCamara": 2
-        }
-    ];
+    if(!Array.isArray(dados)){
+        dados = [dados];
+    } 
 
-    //resultados = JSON.parse(resultados);
-
-    resultados.forEach(element => {
+    dados.forEach(element => {
         let table = document.getElementById('table_leituras');
 
         let tr = document.createElement('tr');
@@ -67,7 +81,7 @@ function filtrar_leituras(){
     const id = document.getElementById('input_id').value;
     if(!id)
         alert("Forneça um ID válido!");
-    //req
-    //.then() : 
-    //preencheLeituras(); //passa os dados
+    else if(val == 1)
+        getLeituraById(id);
+    else getLeiturasByCamara(id);
 }

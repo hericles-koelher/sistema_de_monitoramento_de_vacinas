@@ -1,24 +1,21 @@
-<div id="results_leituras">
-    <div id="filters_leituras" class="filters">
+<div id="results_camaras" style="width:100%">
+    <div id="filters_camaras" class="filters">
         <label for="sel_filter">Filtrar por:</label>
         <select id="sel_filter" onchange="selectLeituras(this)">
             <option value="0" selected>Nenhum filtro</option>
             <option value="1">ID</option>
-            <option value="2">Câmara</option>
+            <option value="2">Gestor</option>
         </select>
         <input id='input_id' type="number" placeholder="Insira o ID..." disabled>
-        <button class="btn" onclick="filtrar_leituras()" id="filter" disabled>
+        <button class="btn" onclick="filtrar_camaras()" id="filter" disabled>
             Filtrar
         </button>
     </div>
-    <table id="table_leituras" class="tabela">
+    <table id="table_camaras" class="tabela">
         <tr>
             <th>ID</th>
-            <th>Câmara</th>
-            <th>Data</th>
-            <th>Hora</th>
-            <th>Coordenada X</th>
-            <th>Coordenada Y</th>
+            <th>Temperatura Atual</th>
+            <th>Lote</th>            
         </tr>
     </table>
 </div>

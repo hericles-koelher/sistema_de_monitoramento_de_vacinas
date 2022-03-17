@@ -1,20 +1,29 @@
-function preencheLotes(dados = ''){
-    resultados = [
-        {
-            "id": 12,
-            "validade" : "2022-04-01",
-            "vacinaId" : 1
-        },
-        {
-            "id": 13,
-            "validade" : "2022-05-03",
-            "vacinaId" : 2
-        }
-    ];
+async function getLotes(){
+    $('#main').load('lotes.html', () => {
+        $.get('http://localhost:8080/api/v1/lotes')
+        .done(data => {
+            console.log(data);
+            preencheLotes(data);
+        });
+    });
+}
 
-    //resultados = JSON.parse(resultados);
+function getLoteById(id){
+    $('#main').load('lotes.html', () => {
+        $.get(`http://localhost:8080/api/v1/lotes/${id}`)
+        .done(data => {
+            console.log(data);
+            preencheLotes(data);
+        });
+    });
+}
 
-    resultados.forEach(element => {
+function preencheLotes(dados){
+    if(!Array.isArray(dados)){
+        dados = [dados];
+    }  
+
+    dados.forEach(element => {
         let table = document.getElementById('table_lotes');
 
         let tr = document.createElement('tr');
@@ -28,7 +37,7 @@ function preencheLotes(dados = ''){
         tr.appendChild(data);
 
         let id_vacina = document.createElement('td');
-        id_vacina.innerHTML = element.vacinaId;
+        id_vacina.innerHTML = element.idVacina;
         tr.appendChild(id_vacina);
 
         table.appendChild(tr);
@@ -39,7 +48,5 @@ function filtrar_lotes(){
     const id = document.getElementById('input_id_l').value;
     if(!id)
         alert("Forneça um ID válido!");
-    //req
-    //.then() : 
-    //preencheLeituras(); //passa os dados
+    else getLoteById(id);
 }

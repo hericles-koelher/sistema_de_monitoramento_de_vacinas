@@ -8,8 +8,8 @@
     <script src="resources/jquery-3.6.0.min.js"></script>
     <script src="controllers/LeiturasController.js"></script>
     <script src="controllers/VacinasController.js"></script>
-    <script src="controllers/GestorController.js"></script>
     <script src="controllers/LotesController.js"></script>
+    <script src="controllers/CamarasController.js"></script>
 
     <title>Painel do Gestor</title>
 
@@ -20,11 +20,7 @@
         window.onload = () => {
             var primeira_aba = document.getElementById('leituras'); 
             aba(primeira_aba);
-            //req
-            preencheLeituras();
-            preencheGestores();
-            preencheVacinas();
-            preencheLotes();
+            getLeituras();
         }
 
         function aba(obj){
@@ -33,14 +29,9 @@
             if(aba_atual && aba_atual.id != obj.id){
                 aba_atual.style.backgroundColor = 'white';
                 aba_atual.style.color = 'black';
-                document.getElementById('results_' + aba_atual.id).style.display = 'none';
-                document.getElementById('results_' + obj.id).style.display = 'block';
             }
 
             aba_atual = obj;
-            /*fetch('leituras.html',{mode: 'no-cors'})
-            .then(resp => {return resp.text()})
-            .then(text => console.log(text));*/
         }   
         
     </script>
@@ -50,96 +41,18 @@
         <img src="resources/vaccination.svg" width="40px">
         <span style="width: 100%;">Painel do Gestor</span>
         <nav style="width: 100%">
-            <button id="leituras" onclick="aba(this)">Leituras</button>
+            <button id="leituras" onclick="aba(this); getLeituras()">Leituras</button>
             <button id="notificacoes" onclick="aba(this)">Notificações</button>
-            <button id="vacinas" onclick="aba(this)">Vacinas</button>
-            <button id="camaras" onclick="aba(this)">Câmaras</button>
-            <button id="lotes" onclick="aba(this)">Lotes</button>
-            <button id="gestores" onclick="aba(this)">Gestores</button>
+            <button id="vacinas" onclick="aba(this); getVacinas()">Vacinas</button>
+            <button id="camaras" onclick="aba(this); getCamaras()">Câmaras</button>
+            <button id="lotes" onclick="aba(this); getLotes()">Lotes</button>
         </nav>
     </header>
     
-    <div id="main">
-        <div id="results_leituras">
-            <div id="filters_leituras" class="filters">
-                <label for="sel_filter">Filtrar por:</label>
-                <select id="sel_filter" onchange="selectLeituras(this)">
-                    <option value="0" selected>Nenhum filtro</option>
-                    <option value="1">ID</option>
-                    <option value="2">Câmara</option>
-                </select>
-                <input id='input_id' type="number" placeholder="Insira o ID..." disabled>
-                <button class="btn" onclick="filtrar_leituras()" id="filter" disabled>
-                    Filtrar
-                </button>
-            </div>
-            <table id="table_leituras" class="tabela">
-                <tr>
-                    <th>ID</th>
-                    <th>Câmara</th>
-                    <th>Data</th>
-                    <th>Hora</th>
-                    <th>Coordenada X</th>
-                    <th>Coordenada Y</th>
-                </tr>
-            </table>
-        </div>
-
-        <div id="results_vacinas" style="display: none;">
-            <div id="filters_vacinas" class="filters">                                
-                <input id='input_id_v' type="number" placeholder="Insira o ID...">
-                <button class="btn" onclick="filtrar_vacinas()" id="filter">
-                    Filtrar
-                </button>
-            </div>
-            <table id="table_vacinas" class="tabela">
-                <tr>
-                    <th>ID</th>
-                    <th>Nome</th>
-                    <th>Tolerância (minutos)</th>
-                    <th>Temp. máxima (°C)</th>
-                    <th>Temp. mínima (°C)</th>
-                </tr>
-            </table>
-        </div>
+    <div id="main">        
 
         <div id="results_notificacoes"></div>
 
-        <div id="results_camaras" style="display: none;"></div>
-        
-        <div id="results_lotes" style="display: none;">
-            <div id="filters_lotes" class="filters">
-                <input id='input_id_l' type="number" placeholder="Insira o ID...">
-                <button class="btn" onclick="filtrar_lotes()" id="filter">
-                    Filtrar
-                </button>
-            </div>
-            <table id="table_lotes" class="tabela">
-                <tr>
-                    <th>ID</th>
-                    <th>Validade</th>
-                    <th>ID Vacina</th>                    
-                </tr>
-            </table>
-        </div>
-
-        <div id="results_gestores" style="display: none;">
-            <div id="filters_gestores" class="filters">                                
-                <input id='input_id_g' type="email" placeholder="Insira o email...">
-                <button class="btn" onclick="filtrar_gestores()" id="filter">
-                    Filtrar
-                </button>
-            </div>
-            <table id="table_gestores" class="tabela">
-                <tr>
-                    <th>ID</th>
-                    <th>Nome</th>
-                    <th>Email</th>     
-                    <th>Coordenada X</th>               
-                    <th>Coordenada Y</th>
-                </tr>
-            </table>
-        </div>
     </div>
 </body>
 </html>

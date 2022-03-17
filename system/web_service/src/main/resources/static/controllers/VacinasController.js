@@ -1,25 +1,29 @@
-function preencheVacinas(dados = ''){
-    console.log('vacinas');
-    let resultados = [
-        {
-            "id": 1,
-            "nome": "Comirnaty (Pfizer/Wyeth)",
-            "toleranciaEmMinutos" : 5,
-            "temperaturaMinima" : 2,
-            "temperaturaMaxima" : 8
-        },
-        {
-            "id": 2,
-            "nome": "Oxford/Covishield (Fiocruz/Astrazeneca)",
-            "toleranciaEmMinutos": 10,
-            "temperaturaMinima": 2,
-            "temperaturaMaxima": 10
-        }
-    ];
+async function getVacinas(){
+    $('#main').load('vacinas.html', () => {
+        $.get('http://localhost:8080/api/v1/vacinas')
+        .done(data => {
+            console.log(data);
+            preencheVacinas(data);
+        });
+    });
+}
 
-    //resultados = JSON.parse(resultados);
+function getVacinaById(id){
+    $('#main').load('vacinas.html', () => {
+        $.get(`http://localhost:8080/api/v1/vacinas/${id}`)
+        .done(data => {
+            console.log(data);
+            preencheVacinas(data);
+        });
+    });
+}
 
-    resultados.forEach(element => {
+function preencheVacinas(dados){
+    if(!Array.isArray(dados)){
+        dados = [dados];
+    }  
+
+    dados.forEach(element => {
         let table = document.getElementById('table_vacinas');
 
         let tr = document.createElement('tr');
@@ -51,7 +55,5 @@ function filtrar_vacinas(){
     const id = document.getElementById('input_id_v').value;
     if(!id)
         alert("Forneça um ID válido!");
-    //req
-    //.then() : 
-    //preencheVacinas(); //passa os dados
+    else getVacinaById(id);
 }
