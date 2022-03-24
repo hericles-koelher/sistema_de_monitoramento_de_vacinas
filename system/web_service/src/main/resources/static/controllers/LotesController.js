@@ -18,6 +18,49 @@ function getLoteById(id){
     });
 }
 
+function postLote(){
+    Swal.fire({
+        title: 'Cadastrar lote',
+        html:
+            '<label for="input1">Validade:</label><br>' +
+            '<input id="input1" type="date"><br>' +
+            '<label for="input2">ID vacina:</label><br>' + 
+            '<input type="number" id="input2">',            
+        showCancelButton: true,
+        confirmButtonText: 'Cadastrar',
+        showLoaderOnConfirm: true,
+        preConfirm: function () {
+            return new Promise(function (resolve) {
+              resolve([
+                $('#input1').val(),
+                $('#input2').val(),
+              ])
+            })
+          },
+        onOpen: function () {
+            $('#input1').focus()
+        },
+        allowOutsideClick: () => !Swal.isLoading()
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: `http://localhost:8080/api/v1/lotes`,
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    validade: result.value[0],
+                    vacinaId: result.value[1]
+                })
+            })
+            .done(() => {
+                Swal.fire("Lote cadastrado!");
+                getLotes();
+            });    
+        }
+    })
+       
+}
+
 function preencheLotes(dados){
     if(!Array.isArray(dados)){
         dados = [dados];

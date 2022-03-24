@@ -18,6 +18,56 @@ function getVacinaById(id){
     });
 }
 
+function postVacina(){
+    Swal.fire({
+        title: 'Cadastrar vacina:',
+        html:
+            '<label for="input1">Nome:</label><br>' +
+            '<input id="input1" class=""><br>' +
+            '<label for="input2">Tolerância:</label><br>' + 
+            '<input type="number" id="input2" class=""><br>' +
+            '<label for="input3">Temperatura máxima:</label><br>' + 
+            '<input id="input3" type="number" class=""><br>' +
+            '<label for="input4">Temperatura Mínima:</label><br>' + 
+            '<input id="input4" type="number" class="">',
+        showCancelButton: true,
+        confirmButtonText: 'Cadastrar',
+        showLoaderOnConfirm: true,
+        preConfirm: function () {
+            return new Promise(function (resolve) {
+              resolve([
+                $('#input1').val(),
+                $('#input2').val(),
+                $('#input3').val(),
+                $('#input4').val()
+              ])
+            })
+          },
+        onOpen: function () {
+            $('#input1').focus()
+        },
+        allowOutsideClick: () => !Swal.isLoading()
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: 'http://localhost:8080/api/v1/vacinas',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    nome : result.value[0],
+                    toleranciaEmMinutos : result.value[1],
+                    temperaturaMinima : result.value[2],
+                    temperaturaMaxima : result.value[3]
+                    })
+            })
+            .done(() => {
+                Swal.fire("Cadastrado com sucesso!");
+                getVacinas();
+            });
+        }
+    })
+}
+
 function preencheVacinas(dados){
     if(!Array.isArray(dados)){
         dados = [dados];

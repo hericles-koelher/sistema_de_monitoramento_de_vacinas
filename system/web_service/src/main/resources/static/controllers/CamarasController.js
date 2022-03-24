@@ -29,6 +29,60 @@ function getCamaraByGestor(id){
     });
 }
 
+function postCamara(){
+    $.ajax({
+        url: 'http://localhost:8080/api/v1/camaras',
+        method: 'POST'
+    })
+    .done((response) => {
+        Swal.fire("Câmara cadastrada com sucesso com o ID: " + response.id);
+        console.log(response);
+        getCamaras();
+    });
+}
+
+function putLote(){
+    Swal.fire({
+        title: 'Atualizar Lote de câmara',
+        html:
+            '<label for="input1">ID câmara:</label><br>' +
+            '<input id="input1" type="number"><br>' +
+            '<label for="input2">ID lote:</label><br>' + 
+            '<input type="number" id="input2">',            
+        showCancelButton: true,
+        confirmButtonText: 'Atualizar',
+        showLoaderOnConfirm: true,
+        preConfirm: function () {
+            return new Promise(function (resolve) {
+              resolve([
+                $('#input1').val(),
+                $('#input2').val(),
+              ])
+            })
+          },
+        onOpen: function () {
+            $('#input1').focus()
+        },
+        allowOutsideClick: () => !Swal.isLoading()
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: `http://localhost:8080/api/v1/camaras/${result.value[0]}/atualizarLote`,
+                method: 'PUT',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    idLote: result.value[1]
+                })
+            })
+            .done(() => {
+                Swal.fire("Lote atualizado!");
+                getCamaras();
+            });    
+        }
+    })
+       
+}
+
 function preencheCamaras(dados){
     if(!Array.isArray(dados)){
         dados = [dados];

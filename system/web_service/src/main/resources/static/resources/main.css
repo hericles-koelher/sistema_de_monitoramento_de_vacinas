@@ -75,6 +75,10 @@ input[type=email]{
     font-size: 12pt;
 }
 
+input[type=text]{
+    font-size: 12pt;
+}
+
 select, label{
     font-size: 12pt;
 }
@@ -147,3 +151,16 @@ select, label{
 .btn:active {
     padding-bottom: 7px;
 }
+
+.btn_check{
+    background: none;
+    border: none;
+    color: #05a300;
+    font-size: 15pt;
+    cursor: pointer;
+}
+
+.btn_check:hover{
+    color: #046e00;
+}
+

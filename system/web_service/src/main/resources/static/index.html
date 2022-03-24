@@ -5,15 +5,18 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="resources/jquery-3.6.0.min.js"></script>
     <script src="controllers/LeiturasController.js"></script>
     <script src="controllers/VacinasController.js"></script>
     <script src="controllers/LotesController.js"></script>
     <script src="controllers/CamarasController.js"></script>
+    <script src="controllers/NotificacoesController.js"></script>
 
     <title>Painel do Gestor</title>
 
     <link rel="stylesheet" href="resources/main.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
 
     <script>
         var aba_atual = null;    
@@ -21,6 +24,17 @@
             var primeira_aba = document.getElementById('leituras'); 
             aba(primeira_aba);
             getLeituras();
+            /*setTimeout(() => {
+                $.ajax({
+                    url: 'http://localhost:8080/api/v1/gestores/atualizarLocalizacao/1',
+                    method: 'PUT',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        latitude: 10.4,
+                        longitude: 70.1
+                    })
+                });
+            }, 10000);*/
         }
 
         function aba(obj){
@@ -42,7 +56,7 @@
         <span style="width: 100%;">Painel do Gestor</span>
         <nav style="width: 100%">
             <button id="leituras" onclick="aba(this); getLeituras()">Leituras</button>
-            <button id="notificacoes" onclick="aba(this)">Notificações</button>
+            <button id="notificacoes" onclick="aba(this); getNotificacoes()">Notificações</button>
             <button id="vacinas" onclick="aba(this); getVacinas()">Vacinas</button>
             <button id="camaras" onclick="aba(this); getCamaras()">Câmaras</button>
             <button id="lotes" onclick="aba(this); getLotes()">Lotes</button>
@@ -50,8 +64,6 @@
     </header>
     
     <div id="main">        
-
-        <div id="results_notificacoes"></div>
 
     </div>
 </body>

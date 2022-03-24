@@ -1,0 +1,22 @@
+<div id="results_notificacoes">
+    <div id="filters_notificacoes" class="filters">
+        <label for="sel_filter">Filtrar por:</label>
+        <select id="sel_filter" onchange="selectNotificacoes(this)">
+            <option value="0" selected>Nenhum filtro</option>
+            <option value="1">ID</option>
+            <option value="2">Câmara</option>
+        </select>
+        <input id='input_id' type="number" placeholder="Insira o ID..." disabled>
+        <button class="btn" onclick="filtrar_notificacoes()" id="filter" disabled>
+            Filtrar
+        </button>
+    </div>
+    <table id="table_notificacoes" class="tabela">
+        <tr>
+            <th>ID</th>
+            <th>ID Câmara</th>
+            <th>Atendida</th>
+            <th>Atender</th>
+        </tr>
+    </table>
+</div>

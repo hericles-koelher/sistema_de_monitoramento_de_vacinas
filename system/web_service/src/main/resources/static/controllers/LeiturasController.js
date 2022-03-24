@@ -1,6 +1,5 @@
 async function getLeituras(){
     $('#main').load('leituras.html', () => {
-        console.log('teste');
         $.get('http://localhost:8080/api/v1/leituras')
         .done(data => {
             console.log(data);
