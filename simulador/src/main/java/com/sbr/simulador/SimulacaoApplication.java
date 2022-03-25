@@ -24,8 +24,8 @@ public class SimulacaoApplication{
                 new Random()
         );
 
-        simulacao.simularComportamentoNormal((long) 1);
-//        simulacao.simularComportamentoForaDoNormal((long) 1);
+//        simulacao.simularComportamentoNormal((long) 1);
+        simulacao.simularComportamentoForaDoNormal((long) 1);
 
     }
 
